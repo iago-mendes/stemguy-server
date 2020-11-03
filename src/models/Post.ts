@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 type PostType = mongoose.Document & 
 {
 	_id: string
+	url_id: string
 	title: string
 	date?: Date
 	time: number
@@ -14,6 +15,7 @@ type PostType = mongoose.Document &
 
 const PostSchema = new mongoose.Schema(
 {
+	url_id: {type: String, required: true, unique: true},
     title: {type: String, required: true},
 	date: {type: Date, default: Date.now()},
 	time: {type: Number, required: true},

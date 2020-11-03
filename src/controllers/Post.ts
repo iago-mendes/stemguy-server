@@ -6,8 +6,8 @@ export default
 {
     async create(req: Request, res: Response)
     {
-        const {title, time, author, description, image, markdown} = req.body
-        const post = await Post.create({title, time, author, description, image, markdown})
+        const {url_id, title, time, author, description, image, markdown} = req.body
+        const post = await Post.create({url_id, title, time, author, description, image, markdown})
         return res.status(201).json(post)
     }
 }
