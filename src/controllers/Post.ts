@@ -20,6 +20,14 @@ export default
         return tmp
     },
 
+    async remove(req: Request, res: Response)
+    {
+        const {id} = req.params
+        const tmp = await Post.findByIdAndDelete(id)
+        res.status(200).send()
+        return tmp
+    },
+
     async list(req: Request, res: Response)
     {
         const filters = req.query
