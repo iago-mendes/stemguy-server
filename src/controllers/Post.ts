@@ -52,5 +52,12 @@ export default
         }))
 
         return res.json(list)
+    },
+
+    async show(req: Request, res: Response)
+    {
+        const {id} = req.params
+        const post = await Post.findById(id)
+        return res.json(post)
     }
 }
