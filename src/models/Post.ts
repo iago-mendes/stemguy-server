@@ -17,7 +17,7 @@ const PostSchema = new mongoose.Schema(
     author: {type: mongoose.Schema.Types.ObjectId, ref: 'Author', required: true},
     title: {type: String, required: true},
     description: {type: String, required: true},
-    image: {type: mongoose.Schema.Types.ObjectId, ref: 'image', required: true},
+    image: {type: mongoose.Schema.Types.ObjectId, ref: 'Image', required: true},
     markdown: {type: String, required: true}
 })
 
