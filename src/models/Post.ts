@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-type PostType = mongoose.Document & 
+export type PostType = mongoose.Document & 
 {
 	_id: string
 	url_id: string

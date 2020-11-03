@@ -1,6 +1,6 @@
 import {Request, Response} from 'express'
 
-import Post from '../models/Post'
+import Post, {PostType} from '../models/Post'
 
 export default
 {
@@ -18,5 +18,12 @@ export default
         const tmp = await Post.findByIdAndUpdate(id, {_id: id, url_id, title, time, author, description, image, markdown})
         res.status(200).send()
         return tmp
+    },
+
+    async list(req: Request, res: Response)
+    {
+        const filters = req.query
+        const posts = await Post.find(filters)
+        return res.json(posts)
     }
 }
