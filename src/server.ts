@@ -1,8 +1,10 @@
 import express from 'express'
 import cors from 'cors'
 import mongoose from 'mongoose'
+import 'express-async-errors'
 
 import routes from './routes'
+import errorHandler from './errors/handler'
 
 const app = express()
 
@@ -15,6 +17,7 @@ mongoose.connection
 .on('error', error => console.log('[database connection error]:', error))
 
 app.use(routes)
+app.use(errorHandler)
 
 const port = 4755
 app.listen(port, () => console.log('server started at port', port))
