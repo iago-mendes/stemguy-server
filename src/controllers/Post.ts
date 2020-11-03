@@ -1,6 +1,15 @@
 import {Request, Response} from 'express'
 
-import Post, {PostType} from '../models/Post'
+import Post from '../models/Post'
+
+interface List
+{
+    id: string
+    url_id: string
+    title: string
+    description: string
+    image: string
+}
 
 export default
 {
@@ -32,6 +41,16 @@ export default
     {
         const filters = req.query
         const posts = await Post.find(filters)
-        return res.json(posts)
+
+        let list: List[] = posts.map(post => (
+        {
+            id: post._id,
+            url_id: post.url_id,
+            title: post.title,
+            description: post.description,
+            image: post.image
+        }))
+
+        return res.json(list)
     }
 }
