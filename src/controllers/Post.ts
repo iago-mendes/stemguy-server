@@ -1,6 +1,7 @@
 import {Request, Response} from 'express'
 
 import Post from '../models/Post'
+import Flag from '../models/Flag'
 
 interface List
 {
@@ -9,22 +10,24 @@ interface List
     title: string
     description: string
     image: string
+    flags: Array<{name: string, color: string}>
 }
 
 export default
 {
     async create(req: Request, res: Response)
     {
-        const {url_id, title, time, author, description, image, markdown} = req.body
-        const post = await Post.create({url_id, title, time, author, description, image, markdown})
+        const {url_id, title, time, author, description, image, markdown, flags} = req.body
+        const post = await Post.create({url_id, title, time, author, description, image, markdown, flags})
         return res.status(201).json(post)
     },
 
     async update(req: Request, res: Response)
     {
         const {id} = req.params
-        const {url_id, title, time, author, description, image, markdown} = req.body
-        const tmp = await Post.findByIdAndUpdate(id, {_id: id, url_id, title, time, author, description, image, markdown})
+        const {url_id, title, time, author, description, image, markdown, flags} = req.body
+        const tmp = await Post.findByIdAndUpdate(id,
+            {_id: id, url_id, title, time, author, description, image, markdown, flags})
         res.status(200).send()
         return tmp
     },
@@ -42,14 +45,28 @@ export default
         const filters = req.query
         const posts = await Post.find(filters)
 
-        let list: List[] = posts.map(post => (
+        let list: List[] = []
+        const promises = posts.map(async post => 
         {
-            id: post._id,
-            url_id: post.url_id,
-            title: post.title,
-            description: post.description,
-            image: post.image
-        }))
+            let flags: Array<{name: string, color: string}> = []
+            const promises2 = post.flags.map(async flagId =>
+            {
+                let flag = await Flag.findById(flagId)
+                if (flag) flags.push({name: flag.name, color: flag.color})
+            })
+            await Promise.all(promises2)
+
+            list.push(
+            {
+                id: post._id,
+                url_id: post.url_id,
+                title: post.title,
+                description: post.description,
+                image: post.image,
+                flags
+            })
+        })
+        await Promise.all(promises)
 
         return res.json(list)
     },

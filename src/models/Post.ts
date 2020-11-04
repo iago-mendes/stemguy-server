@@ -11,6 +11,7 @@ export type PostType = mongoose.Document &
 	description: string
 	image: string
 	markdown: string
+	flags: Array<string>
 }
 
 const PostSchema = new mongoose.Schema(
@@ -22,7 +23,8 @@ const PostSchema = new mongoose.Schema(
     author: {type: mongoose.Schema.Types.ObjectId, ref: 'Author', required: true},
     description: {type: String, required: true},
     image: {type: mongoose.Schema.Types.ObjectId, ref: 'Image', required: true},
-    markdown: {type: String, required: true}
+	markdown: {type: String, required: true},
+	flags: [{type: mongoose.Schema.Types.ObjectId, ref: 'Flag'}]
 })
 
 export default mongoose.model<PostType>('Post', PostSchema)
