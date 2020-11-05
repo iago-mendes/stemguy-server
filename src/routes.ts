@@ -1,11 +1,14 @@
 import express from 'express'
+import multer from 'multer'
 
+import multerConfig from './config/multer'
 import Post from './controllers/Post'
 import Flag from './controllers/Flag'
 import Author from './controllers/Author'
 import Image from './controllers/Image'
 
 const routes = express.Router()
+const upload = multer(multerConfig)
 
 routes.post('/posts', Post.create)
 routes.put('/posts/:id', Post.update)
