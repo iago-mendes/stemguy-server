@@ -42,29 +42,38 @@ export default
 
     async list(req: Request, res: Response)
     {
-        const filters = req.query
-        const posts = await Post.find(filters)
+        const {flags: sflags} = req.query
+        let flags: string[] = []
+        if (sflags) flags = JSON.parse(String(sflags))
+        console.log('[flags]', flags)
+        
+        const posts = await Post.find()
 
         let list: List[] = []
         const promises = posts.map(async post => 
         {
-            let flags: Array<{name: string, color: string}> = []
+            let includesFlags = flags.every(flag => post.flags.includes(flag))
+
+            let flagList: Array<{name: string, color: string}> = []
             const promises2 = post.flags.map(async flagId =>
             {
                 let flag = await Flag.findById(flagId)
-                if (flag) flags.push({name: flag.name, color: flag.color})
+                if (flag) flagList.push({name: flag.name, color: flag.color})
             })
             await Promise.all(promises2)
 
-            list.push(
+            if (includesFlags || flags.length === 0)
             {
-                id: post._id,
-                url_id: post.url_id,
-                title: post.title,
-                description: post.description,
-                image: post.image,
-                flags
-            })
+                list.push(
+                {
+                    id: post._id,
+                    url_id: post.url_id,
+                    title: post.title,
+                    description: post.description,
+                    image: post.image,
+                    flags: flagList
+                })
+            }
         })
         await Promise.all(promises)
 
