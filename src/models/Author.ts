@@ -12,7 +12,7 @@ const AuthorSchema = new mongoose.Schema(
 {
     name: {type: String, required: true},
     role: {type: String, required: true},
-    image: {type: mongoose.Schema.Types.ObjectId, ref: 'Image', required: false}
+    image: {type: String, required: false}
 })
 
 export default mongoose.model<AuthorType>('Author', AuthorSchema)
