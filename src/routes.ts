@@ -3,6 +3,7 @@ import express from 'express'
 import Post from './controllers/Post'
 import Flag from './controllers/Flag'
 import Author from './controllers/Author'
+import Image from './controllers/Image'
 
 const routes = express.Router()
 
@@ -21,5 +22,10 @@ routes.post('/authors', Author.create)
 routes.put('/authors/:id', Author.update)
 routes.delete('/authors/:id', Author.remove)
 routes.get('/authors', Author.list)
+
+routes.post('/images', Image.create)
+routes.put('/images/:id', Image.update)
+routes.delete('/images/:id', Image.remove)
+routes.get('/images', Image.list)
 
 export default routes
