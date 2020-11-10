@@ -7,7 +7,7 @@ type ImageType = mongoose.Document &
 	alt: string
 	credit?: string
 	creditLink?: string
-	date: Date
+	date?: Date
 	posts: Array<string>
 }
 
