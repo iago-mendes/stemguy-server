@@ -4,6 +4,14 @@ import path from 'path'
 
 import Author from '../models/Author'
 
+interface List
+{
+    id: string
+    name: string
+    role: string
+    image: string | undefined
+}
+
 export default
 {
     async create(req: Request, res: Response)
@@ -44,6 +52,10 @@ export default
     async remove(req: Request, res: Response)
     {
         const {id} = req.params
+
+        const previous = await Author.findById(id)
+        if (previous?.image) fs.unlinkSync(path.join(__dirname, '..', '..', 'uploads', previous.image))
+
         const tmp = await Author.findByIdAndDelete(id)
         res.status(200).send()
         return tmp
@@ -52,6 +64,15 @@ export default
     async list(req: Request, res: Response)
     {
         const authors = await Author.find()
-        return res.json(authors)
+
+        let list: List[] = authors.map(author => (
+        {
+            id: author._id,
+            name: author.name,
+            role: author.role,
+            image: `http://localhost:4755/uploads/${author.image}`
+        }))
+
+        return res.json(list)
     }
 }
