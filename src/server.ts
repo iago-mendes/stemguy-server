@@ -11,7 +11,10 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-mongoose.connect('mongodb://localhost/stemguy', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false})
+mongoose.connect(
+    'mongodb://localhost/stemguy',
+    {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true}
+)
 mongoose.connection
 .once('open', () => console.log('database connected'))
 .on('error', error => console.log('[database connection error]:', error))
