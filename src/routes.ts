@@ -21,13 +21,13 @@ routes.put('/flags/:id', Flag.update)
 routes.delete('/flags/:id', Flag.remove)
 routes.get('/flags', Flag.list)
 
-routes.post('/authors', Author.create)
-routes.put('/authors/:id', Author.update)
+routes.post('/authors', upload.single('image'), Author.create)
+routes.put('/authors/:id', upload.single('image'), Author.update)
 routes.delete('/authors/:id', Author.remove)
 routes.get('/authors', Author.list)
 
-routes.post('/images', Image.create)
-routes.put('/images/:id', Image.update)
+routes.post('/images', upload.single('image'), Image.create)
+routes.put('/images/:id', upload.single('image'), Image.update)
 routes.delete('/images/:id', Image.remove)
 routes.get('/images', Image.list)
 
