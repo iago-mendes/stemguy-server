@@ -3,11 +3,13 @@ import cors from 'cors'
 import mongoose from 'mongoose'
 import 'express-async-errors'
 import path from 'path'
+import dotenv from 'dotenv'
 
 import routes from './routes'
 import errorHandler from './errors/handler'
 
 const app = express()
+dotenv.config()
 
 app.use(cors())
 app.use(express.json())

@@ -3,6 +3,7 @@ import fs from 'fs'
 import path from 'path'
 
 import Author from '../models/Author'
+import baseUrl from '../config/baseUrl'
 
 interface List
 {
@@ -70,7 +71,7 @@ export default
             id: author._id,
             name: author.name,
             role: author.role,
-            image: `http://localhost:4755/uploads/${author.image}`
+            image: `${baseUrl}/uploads/${author.image}`
         }))
 
         return res.json(list)

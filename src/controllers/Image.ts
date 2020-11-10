@@ -3,6 +3,7 @@ import fs from 'fs'
 import path from 'path'
 
 import Image from '../models/Image'
+import baseUrl from '../config/baseUrl'
 
 interface List
 {
@@ -21,7 +22,7 @@ export default
         const {filename} = req.file
         const {alt, credit, creditLink} = req.body
         const image = await Image.create({filename, alt, credit, creditLink, posts: []})
-        return res.status(201).json({url: `http://localhost:4755/uploads/${image.filename}`, id: image._id})
+        return res.status(201).json({url: `${baseUrl}/uploads/${image.filename}`, id: image._id})
     },
 
     async update(req: Request, res: Response)
@@ -65,7 +66,7 @@ export default
         const list: List[] = images.map(image => (
             {
                 id: image._id,
-                url: `http://localhost:4755/uploads/${image.filename}`,
+                url: `${baseUrl}/uploads/${image.filename}`,
                 alt: image.alt,
                 credit: image.credit,
                 creditLink: image.creditLink,
