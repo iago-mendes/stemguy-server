@@ -27,7 +27,7 @@ const multerConfig =
     },
     fileFilter: (req: any, file: Express.Multer.File, cb: (error: Error | null, param?: boolean) => void) =>
     {
-        const allowedMimes = ['image/jpg', 'image/png']
+        const allowedMimes = ['image/jpg', 'image/jpeg', 'image/png']
         if(allowedMimes.includes(file.mimetype)) cb(null, true)
         else cb(new Error('Invalid file type.'))
     }

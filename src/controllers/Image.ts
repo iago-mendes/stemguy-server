@@ -4,6 +4,16 @@ import path from 'path'
 
 import Image from '../models/Image'
 
+interface List
+{
+    id: string,
+    url: string,
+    alt: string,
+    credit: string | undefined,
+    creditLink: string | undefined,
+    date: Date | undefined
+}
+
 export default
 {
     async create(req: Request, res: Response)
@@ -39,6 +49,10 @@ export default
     async remove(req: Request, res: Response)
     {
         const {id} = req.params
+
+        const previous = await Image.findById(id)
+        if (previous) fs.unlinkSync(path.join(__dirname, '..', '..', 'uploads', previous.filename))
+
         const tmp = await Image.findByIdAndDelete(id)
         res.status(200).send()
         return tmp
@@ -47,6 +61,18 @@ export default
     async list(req: Request, res: Response)
     {
         const images = await Image.find()
-        return res.json(images)
+
+        const list: List[] = images.map(image => (
+            {
+                id: image._id,
+                url: `http://localhost:4755/uploads/${image.filename}`,
+                alt: image.alt,
+                credit: image.credit,
+                creditLink: image.creditLink,
+                date: image.date
+            }
+        ))
+
+        return res.json(list)
     }
 }
