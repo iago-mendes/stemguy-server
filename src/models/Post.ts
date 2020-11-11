@@ -5,7 +5,7 @@ export type PostType = mongoose.Document &
 	_id: string
 	url_id: string
 	title: string
-	date: Date
+	date?: Date
 	time: number
 	author: string
 	description: string

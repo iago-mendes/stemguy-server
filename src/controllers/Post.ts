@@ -2,6 +2,9 @@ import {Request, Response} from 'express'
 
 import Post from '../models/Post'
 import Flag from '../models/Flag'
+import Image from '../models/Image'
+import Author from '../models/Author'
+import baseUrl from '../config/baseUrl'
 
 interface List
 {
@@ -64,13 +67,14 @@ export default
 
             if (includesFlags || flags.length === 0)
             {
-                list.push(
+                const image = await Image.findById(post.image)
+                if (image) list.push(
                 {
                     id: post._id,
                     url_id: post.url_id,
                     title: post.title,
                     description: post.description,
-                    image: post.image,
+                    image: `${baseUrl}/uploads/${image.filename}`,
                     flags: flagList
                 })
             }
@@ -82,8 +86,46 @@ export default
 
     async show(req: Request, res: Response)
     {
-        const {id} = req.params
-        const post = await Post.findById(id)
-        return res.json(post)
+        const {urlId} = req.params
+
+        const post = await Post.findOne({url_id: urlId})
+        if (!post) return res.status(404).json({message: 'Post not found!'})
+
+        let flags: Array<{name: string, color: string}> = []
+        const promises = post.flags.map(async flagId =>
+        {
+            const flag = await Flag.findById(flagId)
+            if (flag) flags.push({name: flag.name, color: flag.color})
+        })
+        await Promise.all(promises)
+
+        const author = await Author.findById(post.author)
+        if (!author) return res.status(404).json({message: 'Author not found!'})
+
+        const image = await Image.findById(post.image)
+        if (!image) return res.status(404).json({message: 'Image not found!'})
+
+        return res.json(
+        {
+            title: post.title,
+            date: post.date,
+            time: post.time,
+            author:
+            {
+                name: author.name,
+                role: author.role,
+                image: `${baseUrl}/uploads/${author.image}`
+            },
+            description: post.description,
+            image:
+            {
+                url: `${baseUrl}/uploads/${image.filename}`,
+                alt: image.alt,
+                credit: image.credit,
+                creditLink: image.creditLink
+            },
+            markdown: post.markdown,
+            flags
+        })
     }
 }
