@@ -15,6 +15,8 @@ routes.put('/posts/:id', Post.update)
 routes.delete('/posts/:id', Post.remove)
 routes.get('/posts', Post.list)
 routes.get('/posts/:urlId', Post.show)
+routes.get('/posts-raw', Post.raw)
+routes.get('/posts-raw/:urlId', Post.rawOne)
 
 routes.post('/flags', Flag.create)
 routes.put('/flags/:id', Flag.update)

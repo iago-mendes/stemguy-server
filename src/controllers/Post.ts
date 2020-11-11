@@ -127,5 +127,18 @@ export default
             markdown: post.markdown,
             flags
         })
+    },
+
+    async raw(req: Request, res: Response)
+    {
+        const posts = await Post.find()
+        return res.json(posts)
+    },
+
+    async rawOne(req: Request, res: Response)
+    {
+        const {urlId} = req.params
+        const post = await Post.findOne({url_id: urlId})
+        return res.json(post)
     }
 }
