@@ -45,15 +45,18 @@ export default
 
     async list(req: Request, res: Response)
     {
-        const {flags: sflags} = req.query
+        const {flags: sflags, search: searchString} = req.query
         let flags: string[] = []
         if (sflags) flags = JSON.parse(String(sflags))
-        console.log('[flags]', flags)
-        
-        const posts = await Post.find()
+				
+				let search: string | undefined = undefined
+				if (searchString) search = String(searchString)
+				
+				const filter = search ? {$text: {$search: search}} : {}
+        const posts = await Post.find(filter)
 
         let list: List[] = []
-        const promises = posts.map(async post => 
+        const promises = posts.map(async post =>
         {
             let includesFlags = flags.every(flag => post.flags.includes(flag))
 

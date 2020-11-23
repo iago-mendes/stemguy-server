@@ -17,14 +17,15 @@ export type PostType = mongoose.Document &
 const PostSchema = new mongoose.Schema(
 {
 	url_id: {type: String, required: true, unique: true},
-    title: {type: String, required: true},
+	title: {type: String, required: true},
 	date: {type: Date, default: Date.now()},
 	time: {type: Number, required: true},
-    author: {type: mongoose.Schema.Types.ObjectId, ref: 'Author', required: true},
-    description: {type: String, required: true},
-    image: {type: mongoose.Schema.Types.ObjectId, ref: 'Image', required: true},
+	author: {type: mongoose.Schema.Types.ObjectId, ref: 'Author', required: true},
+	description: {type: String, required: true},
+	image: {type: mongoose.Schema.Types.ObjectId, ref: 'Image', required: true},
 	markdown: {type: String, required: true},
 	flags: [{type: mongoose.Schema.Types.ObjectId, ref: 'Flag'}]
 })
+PostSchema.index({title: 'text', description: 'text', markdown: 'text'})
 
 export default mongoose.model<PostType>('Post', PostSchema)
