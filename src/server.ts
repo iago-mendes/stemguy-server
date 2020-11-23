@@ -15,8 +15,15 @@ app.use(cors())
 app.use(express.json())
 
 mongoose.connect(
-    'mongodb://localhost/stemguy',
-    {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true}
+	`mongodb://localhost:27017/${process.env.DB_NAME}?authSource=admin`,
+	{
+		user: process.env.DB_USER,
+		pass: process.env.DB_PWD,
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+		useFindAndModify: false,
+		useCreateIndex: true
+	}
 )
 mongoose.connection
 .once('open', () => console.log('database connected'))
