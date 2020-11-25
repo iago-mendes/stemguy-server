@@ -12,7 +12,13 @@ interface List
     url_id: string
     title: string
     description: string
-    image: string
+		image:
+		{
+			url: string
+			alt: string
+			width: number
+			height: number
+		}
     flags: Array<{name: string, color: string}>
 }
 
@@ -77,7 +83,13 @@ export default
                     url_id: post.url_id,
                     title: post.title,
                     description: post.description,
-                    image: `${baseUrl}/uploads/${image.filename}`,
+										image:
+										{
+											url: `${baseUrl}/uploads/${image.filename}`,
+											alt: image.alt,
+											width: image.width,
+											height: image.height
+										},
                     flags: flagList
                 })
             }
@@ -115,17 +127,19 @@ export default
             time: post.time,
             author:
             {
-                name: author.name,
-                role: author.role,
-                image: `${baseUrl}/uploads/${author.image}`
+							name: author.name,
+							role: author.role,
+							image: `${baseUrl}/uploads/${author.image}`
             },
             description: post.description,
             image:
             {
-                url: `${baseUrl}/uploads/${image.filename}`,
-                alt: image.alt,
-                credit: image.credit,
-                creditLink: image.creditLink
+							url: `${baseUrl}/uploads/${image.filename}`,
+							alt: image.alt,
+							credit: image.credit,
+							creditLink: image.creditLink,
+							width: image.width,
+							height: image.height
             },
             markdown: post.markdown,
             flags
