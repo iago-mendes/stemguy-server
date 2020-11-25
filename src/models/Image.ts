@@ -7,16 +7,20 @@ type ImageType = mongoose.Document &
 	alt: string
 	credit?: string
 	creditLink?: string
+	width: number
+	height: number
 	date?: Date
 	posts: Array<string>
 }
 
 const ImageSchema = new mongoose.Schema(
 {
-    filename: {type: String, required: true},
-    alt: {type: String, required: true},
-    credit: {type: String, required: false},
+	filename: {type: String, required: true},
+	alt: {type: String, required: true},
+	credit: {type: String, required: false},
 	creditLink: {type: String, required: false},
+	width: {type: Number, required: true},
+	height: {type: Number, required: true},
 	date: {type: Date, default: Date.now()},
 	posts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Post'}],
 })

@@ -1,17 +1,20 @@
 import {Request, Response} from 'express'
 import fs from 'fs'
 import path from 'path'
+import sizeOf from 'image-size'
 
 import Image from '../models/Image'
 import baseUrl from '../config/baseUrl'
 
 interface List
 {
-    id: string,
-    url: string,
-    alt: string,
-    credit: string | undefined,
-    creditLink: string | undefined,
+    id: string
+    url: string
+    alt: string
+    credit: string | undefined
+		creditLink: string | undefined
+		width: number
+		height: number
     date: Date | undefined
 }
 
@@ -19,9 +22,13 @@ export default
 {
     async create(req: Request, res: Response)
     {
-        const {filename} = req.file
-        const {alt, credit, creditLink} = req.body
-        const image = await Image.create({filename, alt, credit, creditLink, posts: []})
+				const {filename} = req.file
+				const {alt, credit, creditLink} = req.body
+				
+				const {width, height} = sizeOf(path.join(__dirname, '..', '..', 'uploads', filename))
+				if (!width || !height) return res.status(500).json({message: 'An error occurred while getting image dimensions'})
+
+        const image = await Image.create({filename, alt, credit, creditLink, width, height, posts: []})
         return res.status(201).json({url: `${baseUrl}/uploads/${image.filename}`, id: image._id})
     },
 
@@ -64,14 +71,16 @@ export default
         const images = await Image.find()
 
         const list: List[] = images.map(image => (
-            {
-                id: image._id,
-                url: `${baseUrl}/uploads/${image.filename}`,
-                alt: image.alt,
-                credit: image.credit,
-                creditLink: image.creditLink,
-                date: image.date
-            }
+				{
+					id: image._id,
+					url: `${baseUrl}/uploads/${image.filename}`,
+					alt: image.alt,
+					credit: image.credit,
+					creditLink: image.creditLink,
+					width: image.width,
+					height: image.height,
+					date: image.date
+				}
         ))
 
         return res.json(list)
