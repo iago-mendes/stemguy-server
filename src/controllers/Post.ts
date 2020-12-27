@@ -5,6 +5,7 @@ import Flag from '../models/Flag'
 import Image from '../models/Image'
 import Author from '../models/Author'
 import baseUrl from '../config/baseUrl'
+import formatImage from '../utils/formatImage'
 
 interface List
 {
@@ -85,7 +86,7 @@ export default
 					description: post.description,
 					image:
 					{
-						url: `${baseUrl}/uploads/${image.filename}`,
+						url: formatImage(image.filename),
 						alt: image.alt,
 						width: image.width,
 						height: image.height
@@ -129,12 +130,12 @@ export default
 			{
 				name: author.name,
 				role: author.role,
-				image: `${baseUrl}/uploads/${author.image}`
+				image: formatImage(author.image)
 			},
 			description: post.description,
 			image:
 			{
-				url: `${baseUrl}/uploads/${image.filename}`,
+				url: formatImage(image.filename),
 				alt: image.alt,
 				credit: image.credit,
 				creditLink: image.creditLink,
