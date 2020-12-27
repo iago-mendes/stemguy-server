@@ -4,7 +4,6 @@ import Post from '../models/Post'
 import Flag from '../models/Flag'
 import Image from '../models/Image'
 import Author from '../models/Author'
-import baseUrl from '../config/baseUrl'
 import formatImage from '../utils/formatImage'
 
 interface List
@@ -52,15 +51,21 @@ export default
 
 	async list(req: Request, res: Response)
 	{
-		const {flags: sflags, search: searchString} = req.query
+		const {flags: stringedFlags, search: searchString} = req.query
+
 		let flags: string[] = []
-		if (sflags) flags = JSON.parse(String(sflags))
+		if (stringedFlags)
+			flags = JSON.parse(String(stringedFlags))
 		
-		let search: string | undefined = undefined
-		if (searchString) search = String(searchString)
+		let search: string | undefined
+		if (searchString)
+			search = String(searchString)
 		
 		const filter = search ? {$text: {$search: search}} : {}
 		const posts = await Post.find(filter)
+
+		if (filter === {})
+		 posts.sort((a,b) => String(a.date) < String(b.date) ? -1 : 1)
 
 		let list: List[] = []
 		const promises = posts.map(async post =>
@@ -105,7 +110,8 @@ export default
 		const {urlId} = req.params
 
 		const post = await Post.findOne({url_id: urlId})
-		if (!post) return res.status(404).json({message: 'Post not found!'})
+		if (!post)
+			return res.status(404).json({message: 'Post not found!'})
 
 		let flags: Array<{name: string, color: string}> = []
 		const promises = post.flags.map(async flagId =>
@@ -116,10 +122,12 @@ export default
 		await Promise.all(promises)
 
 		const author = await Author.findById(post.author)
-		if (!author) return res.status(404).json({message: 'Author not found!'})
+		if (!author)
+			return res.status(404).json({message: 'Author not found!'})
 
 		const image = await Image.findById(post.image)
-		if (!image) return res.status(404).json({message: 'Image not found!'})
+		if (!image)
+			return res.status(404).json({message: 'Image not found!'})
 
 		return res.json(
 		{
