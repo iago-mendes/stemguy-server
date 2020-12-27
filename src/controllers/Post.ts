@@ -64,8 +64,8 @@ export default
 		const filter = search ? {$text: {$search: search}} : {}
 		const posts = await Post.find(filter)
 
-		if (filter === {})
-		 posts.sort((a,b) => String(a.date) < String(b.date) ? -1 : 1)
+		if (!search)
+		 posts.sort((a,b) => String(a.date) < String(b.date) ? 1 : -1)
 
 		let list: List[] = []
 		const promises = posts.map(async post =>
