@@ -19,6 +19,7 @@ interface List
 		width: number
 		height: number
 	}
+	date?: Date
 	flags: Array<{name: string, color: string}>
 }
 
@@ -64,9 +65,6 @@ export default
 		const filter = search ? {$text: {$search: search}} : {}
 		const posts = await Post.find(filter)
 
-		if (!search)
-		 posts.sort((a,b) => String(a.date) < String(b.date) ? 1 : -1)
-
 		let list: List[] = []
 		const promises = posts.map(async post =>
 		{
@@ -89,6 +87,7 @@ export default
 					url_id: post.url_id,
 					title: post.title,
 					description: post.description,
+					date: post.date,
 					image:
 					{
 						url: formatImage(image.filename),
