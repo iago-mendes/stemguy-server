@@ -52,7 +52,7 @@ export default
 
 	async list(req: Request, res: Response)
 	{
-		const {flags: stringedFlags, search: searchString} = req.query
+		const {flags: stringedFlags, search: searchString, page: requestedPage} = req.query
 
 		let flags: string[] = []
 		if (stringedFlags)
@@ -63,7 +63,23 @@ export default
 			search = String(searchString)
 		
 		const filter = search ? {$text: {$search: search}} : {}
-		const posts = await Post.find(filter)
+		const postsAll = await Post.find(filter)
+
+		postsAll.sort((a, b) => a.date < b.date ? 1 : -1)
+		const postsPerPage = 12
+		const totalPages = Math.ceil(postsAll.length / postsPerPage)
+		res.setHeader('totalPages', totalPages)
+
+		let page = 1
+		if (requestedPage)
+			page = Number(requestedPage)
+
+		if (!(page > 0 && page <= totalPages))
+			return res.status(400).json({message: 'requested page is invalid!'})
+		res.setHeader('page', page)
+
+		const sliceStart = (page - 1) * postsPerPage
+		const posts = postsAll.slice(sliceStart, sliceStart + postsPerPage)
 
 		let list: List[] = []
 		const promises = posts.map(async post =>
