@@ -19,7 +19,7 @@ interface List
 		width: number
 		height: number
 	}
-	date?: Date
+	date: string
 	flags: Array<{name: string, color: string}>
 }
 
@@ -27,17 +27,17 @@ export default
 {
 	async create(req: Request, res: Response)
 	{
-		const {url_id, title, time, author, description, image, markdown, flags} = req.body
-		const post = await Post.create({url_id, title, time, author, description, image, markdown, flags})
+		const {url_id, title, date, time, author, description, image, markdown, flags} = req.body
+		const post = await Post.create({url_id, title, date, time, author, description, image, markdown, flags})
 		return res.status(201).json(post)
 	},
 
 	async update(req: Request, res: Response)
 	{
 		const {id} = req.params
-		const {url_id, title, time, author, description, image, markdown, flags} = req.body
+		const {url_id, title, date, time, author, description, image, markdown, flags} = req.body
 		const tmp = await Post.findByIdAndUpdate(id,
-			{_id: id, url_id, title, time, author, description, image, markdown, flags})
+			{_id: id, url_id, title, date, time, author, description, image, markdown, flags})
 		res.status(200).send()
 		return tmp
 	},

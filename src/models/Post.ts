@@ -5,7 +5,7 @@ export type PostType = mongoose.Document &
 	_id: string
 	url_id: string
 	title: string
-	date?: Date
+	date: string
 	time: number
 	author: string
 	description: string
@@ -18,7 +18,7 @@ const PostSchema = new mongoose.Schema(
 {
 	url_id: {type: String, required: true, unique: true},
 	title: {type: String, required: true},
-	date: {type: Date, default: Date.now()},
+	date: {type: String, required: true},
 	time: {type: Number, required: true},
 	author: {type: mongoose.Schema.Types.ObjectId, ref: 'Author', required: true},
 	description: {type: String, required: true},
