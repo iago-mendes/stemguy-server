@@ -1,5 +1,4 @@
-node_modules/*
-uploads/*
-!uploads/assets/
+node_modules/
+uploads/
+dist/
 .env
-dist/*

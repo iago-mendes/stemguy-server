@@ -32,6 +32,8 @@ mongoose.connection
 app.use(routes)
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')))
 app.use('/public', express.static(path.join(__dirname, '..', 'public')))
+app.use('/assets', express.static(path.join(__dirname, '..', 'assets')))
+
 app.use(errorHandler)
 
 const port = 4755
