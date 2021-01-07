@@ -68,14 +68,30 @@ export default
 
 	async list(req: Request, res: Response)
 	{
-		const {search: requestedSeach} = req.query
+		const {search: requestedSeach, page: requestedPage} = req.query
 
 		let search: string | undefined
 		if (requestedSeach)
 			search = String(requestedSeach)
 
 		const filter = search ? {$text: {$search: search}} : {}
-		const images = await Image.find(filter)
+		const imagesAll = await Image.find(filter)
+
+		imagesAll.sort((a, b) => String(a.date) < String(b.date) ? 1 : -1)
+		const postsPerPage = 12
+		const totalPages = Math.ceil(imagesAll.length / postsPerPage)
+		res.setHeader('totalPages', totalPages)
+
+		let page = 1
+		if (requestedPage)
+			page = Number(requestedPage)
+
+		if (!(page > 0 && page <= totalPages))
+			return res.status(400).json({message: 'requested page is invalid!'})
+		res.setHeader('page', page)
+
+		const sliceStart = (page - 1) * postsPerPage
+		const images = imagesAll.slice(sliceStart, sliceStart + postsPerPage)
 
 		const list: List[] = images.map(image => (
 		{
