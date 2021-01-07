@@ -15,7 +15,7 @@ interface List
 	creditLink: string | undefined
 	width: number
 	height: number
-	date: Date | undefined
+	date: string
 }
 
 export default
@@ -23,12 +23,12 @@ export default
 	async create(req: Request, res: Response)
 	{
 		const {filename} = req.file
-		const {alt, credit, creditLink} = req.body
+		const {alt, credit, creditLink, date} = req.body
 		
 		const {width, height} = sizeOf(path.join(__dirname, '..', '..', 'uploads', filename))
 		if (!width || !height) return res.status(500).json({message: 'An error occurred while getting image dimensions'})
 
-		const image = await Image.create({filename, alt, credit, creditLink, width, height})
+		const image = await Image.create({filename, alt, credit, creditLink, date, width, height})
 		return res.status(201).json({url: `${baseUrl}/uploads/${image.filename}`, id: image._id})
 	},
 
@@ -77,7 +77,7 @@ export default
 		const filter = search ? {$text: {$search: search}} : {}
 		const imagesAll = await Image.find(filter)
 
-		imagesAll.sort((a, b) => String(a.date) < String(b.date) ? 1 : -1)
+		imagesAll.sort((a, b) => a.date < b.date ? 1 : -1)
 		const postsPerPage = 12
 		const totalPages = Math.ceil(imagesAll.length / postsPerPage)
 		res.setHeader('totalPages', totalPages)

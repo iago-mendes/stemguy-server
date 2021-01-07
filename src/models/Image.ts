@@ -9,7 +9,7 @@ type ImageType = mongoose.Document &
 	creditLink?: string
 	width: number
 	height: number
-	date?: Date
+	date: string
 }
 
 const ImageSchema = new mongoose.Schema(
@@ -20,7 +20,7 @@ const ImageSchema = new mongoose.Schema(
 	creditLink: {type: String, required: false},
 	width: {type: Number, required: true},
 	height: {type: Number, required: true},
-	date: {type: Date, default: Date.now()},
+	date: {type: String, required: true},
 })
 ImageSchema.index({alt: 'text'})
 
