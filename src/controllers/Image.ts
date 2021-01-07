@@ -8,81 +8,88 @@ import baseUrl from '../config/baseUrl'
 
 interface List
 {
-    id: string
-    url: string
-    alt: string
-    credit: string | undefined
-		creditLink: string | undefined
-		width: number
-		height: number
-    date: Date | undefined
+	id: string
+	url: string
+	alt: string
+	credit: string | undefined
+	creditLink: string | undefined
+	width: number
+	height: number
+	date: Date | undefined
 }
 
 export default
 {
-    async create(req: Request, res: Response)
-    {
-				const {filename} = req.file
-				const {alt, credit, creditLink} = req.body
-				
-				const {width, height} = sizeOf(path.join(__dirname, '..', '..', 'uploads', filename))
-				if (!width || !height) return res.status(500).json({message: 'An error occurred while getting image dimensions'})
+	async create(req: Request, res: Response)
+	{
+		const {filename} = req.file
+		const {alt, credit, creditLink} = req.body
+		
+		const {width, height} = sizeOf(path.join(__dirname, '..', '..', 'uploads', filename))
+		if (!width || !height) return res.status(500).json({message: 'An error occurred while getting image dimensions'})
 
-        const image = await Image.create({filename, alt, credit, creditLink, width, height, posts: []})
-        return res.status(201).json({url: `${baseUrl}/uploads/${image.filename}`, id: image._id})
-    },
+		const image = await Image.create({filename, alt, credit, creditLink, width, height})
+		return res.status(201).json({url: `${baseUrl}/uploads/${image.filename}`, id: image._id})
+	},
 
-    async update(req: Request, res: Response)
-    {
-        const {id} = req.params
-        const upload = req.file
-        const {alt, credit, creditLink} = req.body
+	async update(req: Request, res: Response)
+	{
+		const {id} = req.params
+		const upload = req.file
+		const {alt, credit, creditLink} = req.body
 
-        let filename = ''
-        const previous = await Image.findById(id)
-        if (previous)
-        {
-            if (upload)
-            {
-                filename = upload.filename
-                fs.unlinkSync(path.join(__dirname, '..', '..', 'uploads', previous.filename))
-            }
-            else filename = previous.filename
-        }
-        
-        const image = await Image.findByIdAndUpdate(id, {filename, alt, credit, creditLink}, {new: true})
-        return res.status(200).json(image)
-    },
+		let filename = ''
+		const previous = await Image.findById(id)
+		if (previous)
+		{
+			if (upload)
+			{
+				filename = upload.filename
+				fs.unlinkSync(path.join(__dirname, '..', '..', 'uploads', previous.filename))
+			}
+			else filename = previous.filename
+		}
+		
+		const image = await Image.findByIdAndUpdate(id, {filename, alt, credit, creditLink}, {new: true})
+		return res.status(200).json(image)
+	},
 
-    async remove(req: Request, res: Response)
-    {
-        const {id} = req.params
+	async remove(req: Request, res: Response)
+	{
+		const {id} = req.params
 
-        const previous = await Image.findById(id)
-        if (previous) fs.unlinkSync(path.join(__dirname, '..', '..', 'uploads', previous.filename))
+		const previous = await Image.findById(id)
+		if (previous) fs.unlinkSync(path.join(__dirname, '..', '..', 'uploads', previous.filename))
 
-        const tmp = await Image.findByIdAndDelete(id)
-        res.status(200).send()
-        return tmp
-    },
+		const tmp = await Image.findByIdAndDelete(id)
+		res.status(200).send()
+		return tmp
+	},
 
-    async list(req: Request, res: Response)
-    {
-        const images = await Image.find()
+	async list(req: Request, res: Response)
+	{
+		const {search: requestedSeach} = req.query
 
-        const list: List[] = images.map(image => (
-				{
-					id: image._id,
-					url: `${baseUrl}/uploads/${image.filename}`,
-					alt: image.alt,
-					credit: image.credit,
-					creditLink: image.creditLink,
-					width: image.width,
-					height: image.height,
-					date: image.date
-				}
-        ))
+		let search: string | undefined
+		if (requestedSeach)
+			search = String(requestedSeach)
 
-        return res.json(list)
-    }
+		const filter = search ? {$text: {$search: search}} : {}
+		const images = await Image.find(filter)
+
+		const list: List[] = images.map(image => (
+		{
+			id: image._id,
+			url: `${baseUrl}/uploads/${image.filename}`,
+			alt: image.alt,
+			credit: image.credit,
+			creditLink: image.creditLink,
+			width: image.width,
+			height: image.height,
+			date: image.date
+		}
+		))
+
+		return res.json(list)
+	}
 }

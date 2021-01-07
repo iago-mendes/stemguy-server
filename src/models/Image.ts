@@ -10,7 +10,6 @@ type ImageType = mongoose.Document &
 	width: number
 	height: number
 	date?: Date
-	posts: Array<string>
 }
 
 const ImageSchema = new mongoose.Schema(
@@ -22,7 +21,7 @@ const ImageSchema = new mongoose.Schema(
 	width: {type: Number, required: true},
 	height: {type: Number, required: true},
 	date: {type: Date, default: Date.now()},
-	posts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Post'}],
 })
+ImageSchema.index({alt: 'text'})
 
 export default mongoose.model<ImageType>('Image', ImageSchema)
