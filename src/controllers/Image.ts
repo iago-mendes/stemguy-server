@@ -5,6 +5,7 @@ import sizeOf from 'image-size'
 
 import Image from '../models/Image'
 import baseUrl from '../config/baseUrl'
+import formatImage from '../utils/formatImage'
 
 interface List
 {
@@ -107,5 +108,26 @@ export default
 		))
 
 		return res.json(list)
+	},
+
+	async show(req: Request, res: Response)
+	{
+		const {id} = req.params
+
+		const image = await Image.findById(id)
+		if (!image)
+			return res.status(404).json({message: 'image not found!'})
+
+		return res.json(
+		{
+			id: image._id,
+			url: formatImage(image.filename),
+			alt: image.alt,
+			credit: image.credit,
+			creditLink: image.creditLink,
+			width: image.width,
+			height: image.height,
+			date: image.date
+		})
 	}
 }

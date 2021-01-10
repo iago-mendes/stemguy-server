@@ -33,5 +33,6 @@ routes.post('/images', [checkKey, upload.single('image')], Image.create)
 routes.put('/images/:id', [checkKey, upload.single('image')], Image.update)
 routes.delete('/images/:id', checkKey, Image.remove)
 routes.get('/images', Image.list)
+routes.get('/images/:id', Image.show)
 
 export default routes
