@@ -34,5 +34,6 @@ routes.put('/images/:id', [checkKey, upload.single('image')], Image.update)
 routes.delete('/images/:id', checkKey, Image.remove)
 routes.get('/images', Image.list)
 routes.get('/images/:id', Image.show)
+routes.get('/images-raw', Image.raw)
 
 export default routes

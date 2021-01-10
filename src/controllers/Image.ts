@@ -129,5 +129,25 @@ export default
 			height: image.height,
 			date: image.date
 		})
+	},
+
+	async raw(req: Request, res: Response)
+	{
+		const images = await Image.find()
+
+		const raw: List[] = images.map(image => (
+		{
+			id: image._id,
+			url: formatImage(image.filename),
+			alt: image.alt,
+			credit: image.credit,
+			creditLink: image.creditLink,
+			width: image.width,
+			height: image.height,
+			date: image.date
+		}
+		))
+
+		return res.json(raw)
 	}
 }
