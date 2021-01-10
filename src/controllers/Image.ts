@@ -37,7 +37,7 @@ export default
 	{
 		const {id} = req.params
 		const upload = req.file
-		const {alt, credit, creditLink} = req.body
+		const {alt, credit, creditLink, date} = req.body
 
 		let filename = ''
 		const previous = await Image.findById(id)
@@ -51,7 +51,7 @@ export default
 			else filename = previous.filename
 		}
 		
-		const image = await Image.findByIdAndUpdate(id, {filename, alt, credit, creditLink}, {new: true})
+		const image = await Image.findByIdAndUpdate(id, {filename, alt, credit, creditLink, date}, {new: true})
 		return res.status(200).json(image)
 	},
 
