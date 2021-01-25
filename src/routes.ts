@@ -4,7 +4,7 @@ import multer from 'multer'
 import multerConfig from './config/multer'
 import Post from './controllers/Post'
 import Flag from './controllers/Flag'
-import Author from './controllers/Author'
+import Member from './controllers/Member'
 import Image from './controllers/Image'
 import checkKey from './middleware/checkKey'
 
@@ -24,10 +24,11 @@ routes.put('/flags/:id', checkKey, Flag.update)
 routes.delete('/flags/:id', checkKey, Flag.remove)
 routes.get('/flags', Flag.list)
 
-routes.post('/authors', [checkKey, upload.single('image')], Author.create)
-routes.put('/authors/:id', [checkKey, upload.single('image')], Author.update)
-routes.delete('/authors/:id', checkKey, Author.remove)
-routes.get('/authors', Author.list)
+routes.post('/members', [checkKey, upload.single('image')], Member.create)
+routes.put('/members/:id', [checkKey, upload.single('image')], Member.update)
+routes.delete('/members/:id', checkKey, Member.remove)
+routes.get('/members', Member.list)
+routes.get('/members/:id', checkKey, Member.show)
 
 routes.post('/images', [checkKey, upload.single('image')], Image.create)
 routes.put('/images/:id', [checkKey, upload.single('image')], Image.update)
