@@ -65,6 +65,9 @@ export default
 		const filter = search ? {$text: {$search: search}} : {}
 		const postsAll = await Post.find(filter)
 
+		if (postsAll.length === 0)
+			return res.json([])
+
 		postsAll.sort((a, b) => a.date < b.date ? 1 : -1)
 		const postsPerPage = 12
 		const totalPages = Math.ceil(postsAll.length / postsPerPage)
