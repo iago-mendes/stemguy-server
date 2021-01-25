@@ -2,7 +2,7 @@ import {Request, Response} from 'express'
 import fs from 'fs'
 import path from 'path'
 
-import Author from '../models/Author'
+import Author from '../models/Member'
 import baseUrl from '../config/baseUrl'
 
 interface List

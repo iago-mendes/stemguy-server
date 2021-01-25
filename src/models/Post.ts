@@ -20,7 +20,7 @@ const PostSchema = new mongoose.Schema(
 	title: {type: String, required: true},
 	date: {type: String, required: true},
 	time: {type: Number, required: true},
-	author: {type: mongoose.Schema.Types.ObjectId, ref: 'Author', required: true},
+	author: {type: mongoose.Schema.Types.ObjectId, ref: 'Member', required: true},
 	description: {type: String, required: true},
 	image: {type: mongoose.Schema.Types.ObjectId, ref: 'Image', required: true},
 	markdown: {type: String, required: true},

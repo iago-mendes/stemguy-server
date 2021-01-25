@@ -3,7 +3,7 @@ import {Request, Response} from 'express'
 import Post from '../models/Post'
 import Flag from '../models/Flag'
 import Image from '../models/Image'
-import Author from '../models/Author'
+import Author from '../models/Member'
 import formatImage from '../utils/formatImage'
 
 interface List
