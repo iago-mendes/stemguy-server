@@ -16,7 +16,7 @@ const MemberSchema = new mongoose.Schema(
 	name: {type: String, required: true},
 	image: {type: String, required: false},
 	role: {type: String, required: true},
-	admin: {type: String, required: true},
+	admin: {type: Boolean, required: true},
 	bio: {type: String, required: true},
 	favTopics: [{type: String}]
 })
