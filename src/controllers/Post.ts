@@ -3,7 +3,7 @@ import {Request, Response} from 'express'
 import Post from '../models/Post'
 import Flag from '../models/Flag'
 import Image from '../models/Image'
-import Author from '../models/Member'
+import Member from '../models/Member'
 import formatImage from '../utils/formatImage'
 
 interface List
@@ -136,7 +136,7 @@ export default
 		})
 		await Promise.all(promises)
 
-		const author = await Author.findById(post.author)
+		const author = await Member.findById(post.author)
 		if (!author)
 			return res.status(404).json({message: 'Author not found!'})
 
@@ -151,6 +151,7 @@ export default
 			time: post.time,
 			author:
 			{
+				id: author._id,
 				name: author.name,
 				role: author.role,
 				image: formatImage(author.image)
