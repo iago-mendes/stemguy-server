@@ -16,7 +16,7 @@ export default
 		if (upload)
 			image = upload.filename
 		
-		const member = await Member.create({name, image, role, admin, bio, favTopics})
+		const member = await Member.create({name, image, role, admin, bio, favTopics: JSON.parse(favTopics)})
 		return res.status(201).json(member)
 	},
 
@@ -41,7 +41,7 @@ export default
 				image = previous.image
 		}
 
-		const member = await Member.findByIdAndUpdate(id, {name, image, role, admin, bio, favTopics}, {new: true})
+		const member = await Member.findByIdAndUpdate(id, {name, image, role, admin, bio, favTopics: JSON.parse(favTopics)}, {new: true})
 		return res.status(200).json(member)
 	},
 
