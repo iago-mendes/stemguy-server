@@ -12,6 +12,17 @@ export type PostType = mongoose.Document &
 	image: string
 	markdown: string
 	flags: Array<string>
+	comments?: Array<
+	{
+		userEmail: string
+		text: string
+		replies: Array<
+		{
+			userEmail: string
+			isMember: boolean
+			text: string
+		}>
+	}>
 }
 
 const PostSchema = new mongoose.Schema(
@@ -24,7 +35,18 @@ const PostSchema = new mongoose.Schema(
 	description: {type: String, required: true},
 	image: {type: mongoose.Schema.Types.ObjectId, ref: 'Image', required: true},
 	markdown: {type: String, required: true},
-	flags: [{type: mongoose.Schema.Types.ObjectId, ref: 'Flag'}]
+	flags: [{type: mongoose.Schema.Types.ObjectId, ref: 'Flag'}],
+	comments:
+	[{
+		userEmail: {type: String, required: true},
+		text: {type: String, required: true},
+		replies:
+		[{
+			userEmail: {type: String, required: true},
+			isMember: {type: Boolean, required: true},
+			text: {type: String, required: true}
+		}]
+	}]
 })
 PostSchema.index({title: 'text', description: 'text', markdown: 'text'})
 
