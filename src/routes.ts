@@ -7,6 +7,7 @@ import Flag from './controllers/Flag'
 import Member from './controllers/Member'
 import Image from './controllers/Image'
 import checkKey from './middleware/checkKey'
+import User from './controllers/User'
 
 const routes = express.Router()
 const upload = multer(multerConfig)
@@ -36,5 +37,12 @@ routes.delete('/images/:id', checkKey, Image.remove)
 routes.get('/images', Image.list)
 routes.get('/images/:id', Image.show)
 routes.get('/images-raw', Image.raw)
+
+routes.post('/users/:email', checkKey, User.signIn)
+routes.post('/users/:email/join', checkKey, User.join)
+routes.put('/users/:email', checkKey, User.update)
+routes.get('/users', checkKey, User.list)
+routes.get('/users/:email', checkKey, User.show)
+routes.delete('/users/:email', checkKey, User.remove)
 
 export default routes
