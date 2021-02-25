@@ -19,6 +19,7 @@ export type PostType = mongoose.Document &
 		text: string
 		replies: Array<
 		{
+			_id?: string
 			userEmail: string
 			isMember: boolean
 			text: string
