@@ -26,6 +26,24 @@ const postComments =
 		return res.send()
 	},
 
+	remove: async (req: Request, res: Response) =>
+	{
+		const {urlId, id} = req.params
+
+		const post = await Post.findOne({url_id: urlId})
+		if (!post)
+			return res.status(404).json({message: 'Post not found!'})
+
+		let comments = post.comments
+		if (!comments)
+			return res.status(404).json({message: 'No comments were found!'})
+		
+		comments = comments.filter(({_id}) => String(_id) != String(id))
+
+		await Post.updateOne({url_id: urlId}, {comments})
+		return res.send()
+	},
+
 	reply: async (req: Request, res: Response) =>
 	{
 		const {urlId, id} = req.params
