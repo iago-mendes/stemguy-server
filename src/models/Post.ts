@@ -14,6 +14,7 @@ export type PostType = mongoose.Document &
 	flags: Array<string>
 	comments?: Array<
 	{
+		_id?: string
 		userEmail: string
 		text: string
 		replies: Array<

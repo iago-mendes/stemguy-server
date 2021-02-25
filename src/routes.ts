@@ -8,6 +8,7 @@ import Member from './controllers/Member'
 import Image from './controllers/Image'
 import checkKey from './middleware/checkKey'
 import User from './controllers/User'
+import postComments from './controllers/postComments'
 
 const routes = express.Router()
 const upload = multer(multerConfig)
@@ -19,6 +20,8 @@ routes.get('/posts', Post.list)
 routes.get('/posts/:urlId', Post.show)
 routes.get('/posts-raw', checkKey, Post.raw)
 routes.get('/posts-raw/:urlId', checkKey, Post.rawOne)
+
+routes.post('/posts/:urlId/comments', checkKey, postComments.create)
 
 routes.post('/flags', checkKey, Flag.create)
 routes.put('/flags/:id', checkKey, Flag.update)
