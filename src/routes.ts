@@ -22,6 +22,7 @@ routes.get('/posts-raw', checkKey, Post.raw)
 routes.get('/posts-raw/:urlId', checkKey, Post.rawOne)
 
 routes.post('/posts/:urlId/comments', checkKey, postComments.create)
+routes.put('/posts/:urlId/comments/:id', checkKey, postComments.reply)
 routes.get('/posts/:urlId/comments', postComments.list)
 
 routes.post('/flags', checkKey, Flag.create)

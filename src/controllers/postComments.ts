@@ -26,6 +26,33 @@ const postComments =
 		return res.send()
 	},
 
+	reply: async (req: Request, res: Response) =>
+	{
+		const {urlId, id} = req.params
+		const {userEmail, text, isMember} = req.body
+
+		if (!userEmail || !text || !isMember)
+			return res.status(400).json({message: 'You need to provide more information!'})
+
+		const post = await Post.findOne({url_id: urlId})
+		if (!post)
+			return res.status(404).json({message: 'Post not found!'})
+
+		let comments = post.comments
+		if (!comments)
+			return res.status(404).json({message: 'No comments were found!'})
+
+		const commentIndex = comments.findIndex(({_id}) => String(_id) == String(id))
+		if (commentIndex < 0)
+			return res.status(404).json({message: 'Comment not found!'})
+
+		const reply = {userEmail, text, isMember}
+		comments[commentIndex].replies.push(reply)
+
+		await Post.updateOne({url_id: urlId}, {comments})
+		return res.send()
+	},
+
 	list: async (req: Request, res: Response) =>
 	{
 		const {urlId} = req.params
@@ -54,6 +81,7 @@ const postComments =
 					image: string
 				}
 				text: string
+				isMember: boolean
 			}>
 		}[] = []
 
@@ -87,6 +115,7 @@ const postComments =
 					image: string
 				}
 				text: string
+				isMember: boolean
 			}[] = []
 
 			const promise2 = comment.replies.map(async reply =>
@@ -112,7 +141,8 @@ const postComments =
 				{
 					id: String(reply._id),
 					user: userInfo,
-					text: reply.text
+					text: reply.text,
+					isMember: reply.isMember
 				})
 			})
 			await Promise.all(promise2)
