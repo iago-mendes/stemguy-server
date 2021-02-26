@@ -26,6 +26,7 @@ routes.delete('/posts/:urlId/comments/:commentId', checkKey, postComments.remove
 routes.post('/posts/:urlId/comments/:commentId/replies', checkKey, postComments.reply)
 routes.delete('/posts/:urlId/comments/:commentId/replies/:replyId', checkKey, postComments.removeReply)
 routes.get('/posts/:urlId/comments', postComments.list)
+routes.get('/posts/:urlId/comments/raw', checkKey, postComments.raw)
 
 routes.post('/flags', checkKey, Flag.create)
 routes.put('/flags/:id', checkKey, Flag.update)

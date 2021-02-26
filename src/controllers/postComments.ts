@@ -199,6 +199,19 @@ const postComments =
 		await Promise.all(promise)
 
 		return res.json(list)
+	},
+
+	raw: async (req: Request, res: Response) =>
+	{
+		const {urlId} = req.params
+
+		const post = await Post.findOne({url_id: urlId})
+		if (!post)
+			return res.status(404).json({message: 'Post not found!'})
+
+		const comments = post.comments || []
+
+		return res.json(comments)
 	}
 }
 
