@@ -22,8 +22,9 @@ routes.get('/posts-raw', checkKey, Post.raw)
 routes.get('/posts-raw/:urlId', checkKey, Post.rawOne)
 
 routes.post('/posts/:urlId/comments', checkKey, postComments.create)
-routes.delete('/posts/:urlId/comments/:id', checkKey, postComments.remove)
-routes.put('/posts/:urlId/comments/:id', checkKey, postComments.reply)
+routes.delete('/posts/:urlId/comments/:commentId', checkKey, postComments.remove)
+routes.post('/posts/:urlId/comments/:commentId/replies', checkKey, postComments.reply)
+routes.delete('/posts/:urlId/comments/:commentId/replies/:replyId', checkKey, postComments.removeReply)
 routes.get('/posts/:urlId/comments', postComments.list)
 
 routes.post('/flags', checkKey, Flag.create)

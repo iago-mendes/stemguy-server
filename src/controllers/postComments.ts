@@ -28,7 +28,7 @@ const postComments =
 
 	remove: async (req: Request, res: Response) =>
 	{
-		const {urlId, id} = req.params
+		const {urlId, commentId} = req.params
 
 		const post = await Post.findOne({url_id: urlId})
 		if (!post)
@@ -38,7 +38,7 @@ const postComments =
 		if (!comments)
 			return res.status(404).json({message: 'No comments were found!'})
 		
-		comments = comments.filter(({_id}) => String(_id) != String(id))
+		comments = comments.filter(({_id}) => String(_id) != String(commentId))
 
 		await Post.updateOne({url_id: urlId}, {comments})
 		return res.send()
@@ -46,7 +46,7 @@ const postComments =
 
 	reply: async (req: Request, res: Response) =>
 	{
-		const {urlId, id} = req.params
+		const {urlId, commentId} = req.params
 		const {userEmail, text, isMember} = req.body
 
 		if (!userEmail || !text || !isMember)
@@ -60,12 +60,35 @@ const postComments =
 		if (!comments)
 			return res.status(404).json({message: 'No comments were found!'})
 
-		const commentIndex = comments.findIndex(({_id}) => String(_id) == String(id))
+		const commentIndex = comments.findIndex(({_id}) => String(_id) == String(commentId))
 		if (commentIndex < 0)
 			return res.status(404).json({message: 'Comment not found!'})
 
 		const reply = {userEmail, text, isMember}
 		comments[commentIndex].replies.push(reply)
+
+		await Post.updateOne({url_id: urlId}, {comments})
+		return res.send()
+	},
+
+	removeReply: async (req: Request, res: Response) =>
+	{
+		const {urlId, commentId, replyId} = req.params
+
+		const post = await Post.findOne({url_id: urlId})
+		if (!post)
+			return res.status(404).json({message: 'Post not found!'})
+
+		let comments = post.comments
+		if (!comments)
+			return res.status(404).json({message: 'No comments were found!'})
+		
+		const commentIndex = comments.findIndex(({_id}) => String(_id) != String(commentId))
+		if (commentIndex < 0)
+			return res.status(404).json({message: 'Comment not found!'})
+
+		const replies = comments[commentIndex].replies.filter(({_id}) => String(_id) != String(replyId))
+		comments[commentIndex].replies = replies
 
 		await Post.updateOne({url_id: urlId}, {comments})
 		return res.send()
