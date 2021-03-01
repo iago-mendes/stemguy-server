@@ -23,6 +23,79 @@ interface List
 	flags: Array<{name: string, color: string}>
 }
 
+async function listPosts(req: Request, res: Response, showAll = false)
+{
+	const {flags: stringedFlags, search: searchString, page: requestedPage} = req.query
+
+	let flags: string[] = []
+	if (stringedFlags)
+		flags = JSON.parse(String(stringedFlags))
+	
+	let search: string | undefined
+	if (searchString)
+		search = String(searchString)
+	
+	const filter = search ? {$text: {$search: search}} : {}
+	const postsAll = await Post.find(filter)
+
+	if (postsAll.length === 0)
+		return res.json([])
+
+	postsAll.sort((a, b) => a.date < b.date ? 1 : -1)
+	const postsPerPage = 12
+	const totalPages = Math.ceil(postsAll.length / postsPerPage)
+	res.setHeader('totalPages', totalPages)
+
+	let page = 1
+	if (requestedPage)
+		page = Number(requestedPage)
+
+	if (!(page > 0 && page <= totalPages))
+		return res.status(400).json({message: 'requested page is invalid!'})
+	res.setHeader('page', page)
+
+	const sliceStart = (page - 1) * postsPerPage
+	const posts = postsAll.slice(sliceStart, sliceStart + postsPerPage)
+
+	let list: List[] = []
+	const promises = posts.map(async post =>
+	{
+		let includesFlags = flags.every(flag => post.flags.includes(flag))
+
+		let flagList: Array<{name: string, color: string}> = []
+		const promises2 = post.flags.map(async flagId =>
+		{
+			let flag = await Flag.findById(flagId)
+			if (flag) flagList.push({name: flag.name, color: flag.color})
+		})
+		await Promise.all(promises2)
+
+		if (includesFlags || flags.length === 0)
+		{
+			const image = await Image.findById(post.image)
+			if (image) list.push(
+			{
+				id: post._id,
+				url_id: post.url_id,
+				title: post.title,
+				description: post.description,
+				date: post.date,
+				image:
+				{
+					url: formatImage(image.filename),
+					alt: image.alt,
+					width: image.width,
+					height: image.height
+				},
+				flags: flagList
+			})
+		}
+	})
+	await Promise.all(promises)
+
+	return res.json(list)
+}
+
 export default
 {
 	async create(req: Request, res: Response)
@@ -52,75 +125,14 @@ export default
 
 	async list(req: Request, res: Response)
 	{
-		const {flags: stringedFlags, search: searchString, page: requestedPage} = req.query
+		const response = await listPosts(req, res)
+		return response
+	},
 
-		let flags: string[] = []
-		if (stringedFlags)
-			flags = JSON.parse(String(stringedFlags))
-		
-		let search: string | undefined
-		if (searchString)
-			search = String(searchString)
-		
-		const filter = search ? {$text: {$search: search}} : {}
-		const postsAll = await Post.find(filter)
-
-		if (postsAll.length === 0)
-			return res.json([])
-
-		postsAll.sort((a, b) => a.date < b.date ? 1 : -1)
-		const postsPerPage = 12
-		const totalPages = Math.ceil(postsAll.length / postsPerPage)
-		res.setHeader('totalPages', totalPages)
-
-		let page = 1
-		if (requestedPage)
-			page = Number(requestedPage)
-
-		if (!(page > 0 && page <= totalPages))
-			return res.status(400).json({message: 'requested page is invalid!'})
-		res.setHeader('page', page)
-
-		const sliceStart = (page - 1) * postsPerPage
-		const posts = postsAll.slice(sliceStart, sliceStart + postsPerPage)
-
-		let list: List[] = []
-		const promises = posts.map(async post =>
-		{
-			let includesFlags = flags.every(flag => post.flags.includes(flag))
-
-			let flagList: Array<{name: string, color: string}> = []
-			const promises2 = post.flags.map(async flagId =>
-			{
-				let flag = await Flag.findById(flagId)
-				if (flag) flagList.push({name: flag.name, color: flag.color})
-			})
-			await Promise.all(promises2)
-
-			if (includesFlags || flags.length === 0)
-			{
-				const image = await Image.findById(post.image)
-				if (image) list.push(
-				{
-					id: post._id,
-					url_id: post.url_id,
-					title: post.title,
-					description: post.description,
-					date: post.date,
-					image:
-					{
-						url: formatImage(image.filename),
-						alt: image.alt,
-						width: image.width,
-						height: image.height
-					},
-					flags: flagList
-				})
-			}
-		})
-		await Promise.all(promises)
-
-		return res.json(list)
+	async listAll(req: Request, res: Response)
+	{
+		const response = await listPosts(req, res, true)
+		return response
 	},
 
 	async show(req: Request, res: Response)
