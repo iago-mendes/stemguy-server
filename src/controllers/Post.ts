@@ -5,6 +5,7 @@ import Flag from '../models/Flag'
 import Image from '../models/Image'
 import Member from '../models/Member'
 import formatImage from '../utils/formatImage'
+import getDate from '../utils/getDate'
 
 interface List
 {
@@ -36,7 +37,9 @@ async function listPosts(req: Request, res: Response, showAll = false)
 		search = String(searchString)
 	
 	const filter = search ? {$text: {$search: search}} : {}
-	const postsAll = await Post.find(filter)
+	const postsAll = showAll
+		? await Post.find(filter)
+		: (await Post.find(filter)).filter(({date}) => date <= getDate())
 
 	if (postsAll.length === 0)
 		return res.json([])
