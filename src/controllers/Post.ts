@@ -45,7 +45,7 @@ async function listPosts(req: Request, res: Response, showAll = false)
 		return res.json([])
 
 	postsAll.sort((a, b) => a.date < b.date ? 1 : -1)
-	const postsPerPage = 12
+	const postsPerPage = 8
 	const totalPages = Math.ceil(postsAll.length / postsPerPage)
 	res.setHeader('totalPages', totalPages)
 
