@@ -8,7 +8,10 @@ This is the API of it, which is available at [api.stemguy.club](https://api.stem
 
 ## Features
 
-- Read articles written with Markdown
+- CRUD of posts
+- CRUD of images
+- CRUD of flags
+- CRUD of members
 
 ## Technologies
 
